@@ -2,7 +2,9 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Chúc Mừng Sinh Nhật Sherry! 🎉</title>
     <style>
         * {
@@ -13,19 +15,32 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
         }
 
         .container {
             text-align: center;
             z-index: 10;
             position: relative;
+            padding: 20px;
+            max-width: 100%;
         }
 
         h1 {
@@ -297,17 +312,21 @@
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
             }
             .name {
-                font-size: 3rem;
+                font-size: 2.5rem;
+                margin: 0.5rem 0;
             }
             .cake {
-                font-size: 5rem;
+                font-size: 4rem;
+                margin: 1rem 0;
             }
             .message {
-                font-size: 1rem;
+                font-size: 0.9rem;
                 padding: 0 1rem;
+                margin-top: 1rem;
             }
             .music-control {
                 width: 50px;
@@ -316,6 +335,58 @@
                 bottom: 20px;
                 right: 20px;
             }
+            .balloon {
+                width: 50px;
+                height: 60px;
+            }
+            .balloon::before {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.8rem;
+            }
+            .name {
+                font-size: 2rem;
+                margin: 0.3rem 0;
+            }
+            .cake {
+                font-size: 3rem;
+                margin: 0.8rem 0;
+            }
+            .message {
+                font-size: 0.8rem;
+                padding: 0 0.5rem;
+                line-height: 1.4;
+            }
+            .music-control {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+                bottom: 15px;
+                right: 15px;
+            }
+            .balloon {
+                width: 40px;
+                height: 50px;
+            }
+            .confetti {
+                width: 8px;
+                height: 8px;
+            }
+            .star {
+                width: 15px;
+                height: 15px;
+            }
+        }
+
+        /* Prevent pull-to-refresh and overscroll on mobile */
+        body {
+            overscroll-behavior: none;
+            touch-action: pan-x pan-y;
         }
     </style>
 </head>
@@ -368,19 +439,56 @@
             isPlaying = !isPlaying;
         }
 
-        // Auto play music on first user interaction
-        document.body.addEventListener('click', function playOnce() {
-            if (!isPlaying) {
-                bgMusic.play().then(() => {
-                    isPlaying = true;
-                    musicControl.textContent = '🎶';
-                    musicControl.classList.add('playing');
-                }).catch(e => {
-                    console.log('Autoplay prevented:', e);
-                });
-            }
-            document.body.removeEventListener('click', playOnce);
-        }, { once: true });
+        // Auto play music when page loads
+        window.addEventListener('load', function() {
+            // Try to autoplay
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicControl.textContent = '🎶';
+                musicControl.classList.add('playing');
+            }).catch(e => {
+                // If autoplay is blocked, try on first user interaction
+                console.log('Autoplay blocked, waiting for user interaction');
+                document.body.addEventListener('click', function playOnce() {
+                    if (!isPlaying) {
+                        bgMusic.play().then(() => {
+                            isPlaying = true;
+                            musicControl.textContent = '🎶';
+                            musicControl.classList.add('playing');
+                        }).catch(err => {
+                            console.log('Play error:', err);
+                        });
+                    }
+                }, { once: true });
+            });
+        });
+
+        // Prevent scroll and touch gestures
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gesturechange', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gestureend', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent default scroll behavior
+        window.addEventListener('scroll', function(e) {
+            window.scrollTo(0, 0);
+        });
+
+        // Prevent keyboard from pushing content up on mobile
+        window.addEventListener('resize', function() {
+            document.body.style.height = window.innerHeight + 'px';
+        });
 
         // Create Confetti
         function createConfetti() {
