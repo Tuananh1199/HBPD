@@ -3,276 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cây Đào Lì Xì Bính Ngọ 2026</title>
+    <title>Lì Xì Tết 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --tet-red: #d32f2f; --tet-gold: #ffeb3b; --dark-red: #620000; --sakura: #ffb7c5; }
+        :root { --tet-red: #d32f2f; --tet-gold: #ffeb3b; --dark-red: #8e0000; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { 
             font-family: 'Lexend', sans-serif; 
-            background: #4a0000; 
+            background: var(--dark-red); 
+            color: var(--tet-gold); 
             min-height: 100vh; 
-            overflow: hidden;
+            overflow-x: hidden; 
+            padding-bottom: 50px; 
         }
-
-        /* Container chính */
-        .tree-world {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle, #8e0000 0%, #4a0000 100%);
-            overflow: hidden;
-        }
-
-        /* Vẽ Cây Đào bằng SVG */
-        .tree-svg {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 85vh;
-            z-index: 1;
-        }
-
-        /* Cánh hoa rơi */
-        .petal {
-            position: absolute;
-            background: var(--sakura);
-            border-radius: 150% 0 150% 0;
-            opacity: 0.8;
-            pointer-events: none;
-            animation: petal-fall linear infinite;
-        }
-        @keyframes petal-fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-        }
-
-        /* Header & UI */
-        .header {
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            z-index: 100; text-align: center; width: 85%;
-            background: rgba(0,0,0,0.5); padding: 12px; border-radius: 20px;
-            border: 1px solid var(--tet-gold);
-            box-shadow: 0 0 15px rgba(255, 235, 59, 0.2);
-        }
-        #secretTitle { font-family: 'Pacifico', cursive; font-size: 1.6rem; color: var(--tet-gold); cursor: pointer; }
-
-        /* Lì xì treo */
-        .lixi-wrap {
-            position: absolute;
-            width: 32px;
-            height: 45px;
-            z-index: 10;
-            cursor: pointer;
-            transform-origin: top center;
-            animation: swing 4s ease-in-out infinite;
-            perspective: 1000px;
-        }
-        @keyframes swing {
-            0%, 100% { transform: rotate(-4deg); }
-            50% { transform: rotate(4deg); }
-        }
-
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flipped .card-inner { transform: rotateY(180deg); }
-
-        .card-front, .card-back {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--tet-gold);
-        }
-        .card-front { background: var(--tet-red); box-shadow: 1px 2px 5px rgba(0,0,0,0.4); }
-        .card-front::after { content: "🧧"; font-size: 1.1rem; }
         
-        /* Chấm ẩn phân biệt cho chủ nhà */
-        .mode-high .card-front::before { content: ""; position: absolute; top: 2px; right: 2px; width: 3px; height: 3px; background: var(--tet-gold); border-radius: 50%; opacity: 0.4; }
+        .coin { position: fixed; top: -50px; font-size: 18px; z-index: 0; pointer-events: none; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
 
-        .card-back { background: #fff; color: var(--tet-red); transform: rotateY(180deg); font-size: 0.55rem; font-weight: 900; text-align: center; }
-
-        /* Hoa Đào (Vẽ bằng CSS) */
-        .blossom {
-            position: absolute;
-            width: 12px; height: 12px;
-            background: #ff80ab;
-            border-radius: 50%;
-            z-index: 5;
-            box-shadow: 0 0 5px #ff4081;
+        .container { max-width: 500px; margin: 0 auto; position: relative; z-index: 2; padding: 10px; }
+        .header { 
+            text-align: center; padding: 15px; 
+            background: rgba(0,0,0,0.4); 
+            border-radius: 20px; 
+            border: 2px solid var(--tet-gold); 
+            margin-bottom: 15px;
         }
-        .blossom::before, .blossom::after {
-            content: ""; position: absolute; width: 100%; height: 100%;
-            background: #ff80ab; border-radius: 50%;
-        }
-        .blossom::before { transform: rotate(45deg); }
-        .blossom::after { transform: rotate(-45deg); }
+        #secretTitle { cursor: pointer; user-select: none; font-family: 'Pacifico', cursive; font-size: 1.8rem; margin: 5px 0; }
 
-        .stats-box {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.7); padding: 8px 20px; border-radius: 50px;
-            font-size: 0.8rem; z-index: 100; border: 1px solid rgba(255,255,255,0.2);
-        }
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .card { aspect-ratio: 3/4.5; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
 
+        .card-front, .card-back { 
+            position: absolute; width: 100%; height: 100%; 
+            backface-visibility: hidden; border-radius: 10px; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; border: 1.5px solid var(--tet-gold); 
+        }
+        .card-front { background: var(--tet-red); box-shadow: inset 0 0 15px rgba(0,0,0,0.3); }
+        .card-front::before { content: "🧧"; font-size: 1.6rem; }
+        
+        .card-back { background: #ffffff; color: var(--tet-red); transform: rotateY(180deg); padding: 5px; text-align: center; }
+        .card-back .amount { font-size: 0.7rem; font-weight: 900; }
+
+        .stats { 
+            margin-top: 20px; text-align: center; font-size: 0.85rem; 
+            background: rgba(0,0,0,0.6); padding: 12px; border-radius: 50px;
+        }
+        #picksContainer { cursor: pointer; padding: 5px 10px; }
+        
         .result-popup { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             background: #fff; border: 6px solid var(--tet-gold); padding: 25px; 
-            border-radius: 25px; text-align: center; z-index: 3000; display: none; width: 290px;
+            border-radius: 25px; text-align: center; z-index: 3000; display: none; 
+            width: 85%; max-width: 320px; 
         }
-        .btn-red { background: var(--tet-red); color: white; border: none; padding: 10px 25px; border-radius: 50px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        #winAmount { font-size: 2.2rem; color: var(--tet-red); font-weight: 900; margin: 15px 0; }
+        .btn-red { 
+            padding: 12px 35px; background: var(--tet-red); color: white; 
+            border: none; border-radius: 50px; font-weight: 700; cursor: pointer; 
+            width: 100%; margin-top: 10px; 
+        }
 
-        /* Admin Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; padding: 20px; color: #333; overflow-y: auto; }
-        .modal-content { background: white; padding: 20px; border-radius: 20px; max-width: 400px; margin: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; padding: 20px; }
+        .modal-content { background: white; color: #333; padding: 20px; border-radius: 20px; max-width: 450px; margin: 0 auto; }
     </style>
 </head>
 <body>
 
-<div class="tree-world">
+<div class="container">
     <div class="header">
-        <span id="adminTrigger" style="cursor:pointer; font-size: 1.5rem;">🐴</span>
-        <h1 id="secretTitle">Cây Đào Tài Lộc</h1>
-        <p id="modeIndicator" style="font-size: 0.6rem; color: var(--tet-gold); letter-spacing: 1px; margin-top: 3px;">TÚI TÀI LỘC</p>
+        <div style="font-size: 2.8rem; cursor: pointer;" id="adminTrigger">🐴</div>
+        <h1 id="secretTitle">Lì Xì Tết 2026</h1>
+        <p id="modeIndicator" style="font-size: 0.65rem; opacity: 0.6; letter-spacing: 2px; font-weight: bold;">TÚI TÀI LỘC</p>
     </div>
-
-    <svg class="tree-svg" viewBox="0 0 500 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M250 800C250 800 240 600 250 450C260 300 210 150 250 50" stroke="#3e2723" stroke-width="25" stroke-linecap="round"/>
-        <path d="M250 600C250 600 150 550 80 480" stroke="#3e2723" stroke-width="15" stroke-linecap="round"/>
-        <path d="M250 550C250 550 380 500 440 420" stroke="#3e2723" stroke-width="15" stroke-linecap="round"/>
-        <path d="M250 400C250 400 100 350 50 250" stroke="#3e2723" stroke-width="10" stroke-linecap="round"/>
-        <path d="M250 350C250 350 400 300 460 200" stroke="#3e2723" stroke-width="10" stroke-linecap="round"/>
-        <path d="M180 300C180 300 120 250 100 180" stroke="#3e2723" stroke-width="8" stroke-linecap="round"/>
-    </svg>
-
-    <div id="treeDecor"></div>
-
-    <div class="stats-box">
-        Lượt: <span id="picks">0</span> | Tổng: <span id="total" style="color:var(--tet-gold)">0đ</span>
+    <div class="cards-grid" id="grid"></div>
+    <div class="stats">
+        <span id="picksContainer">Lượt mở: <span id="picks" style="color:white">0</span></span> | 
+        Tổng: <span id="total" style="color:var(--tet-gold)">0đ</span>
     </div>
 </div>
 
 <div class="result-popup" id="resultPopup">
-    <p style="color: #666; font-weight: bold;">🧧 Bạn nhận được 🧧</p>
-    <div id="winAmount" style="font-size: 2.2rem; font-weight: 900; color: var(--tet-red); margin: 15px 0;">0đ</div>
+    <p style="color: #d32f2f; font-weight: bold;">🧧 Chúc Mừng Bạn! 🧧</p>
+    <div id="winAmount">0đ</div>
     <button class="btn-red" onclick="closePopup()">NHẬN LỘC</button>
 </div>
 
 <div id="adminModal" class="modal">
     <div class="modal-content">
-        <h3>Quản lý (Pass: Test@12345)</h3>
-        <input type="password" id="adminPass" placeholder="Mật khẩu..." style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:10px;">
-        <button class="btn-red" style="width:100%" onclick="verifyAdmin()">XÁC NHẬN</button>
-        <div id="settingsArea" style="display:none; margin-top:20px;">
-             <p>Bạn đã vào chế độ admin. Nhấn Title 3 lần để đổi túi tiền.</p>
-             <button class="btn-red" style="background:#666" onclick="location.reload()">TẢI LẠI TRANG</button>
-        </div>
+        <h2 style="text-align:center; color:var(--tet-red)">Quản Trị</h2>
+        <input type="password" id="adminPass" placeholder="Mật khẩu" style="width:100%; padding:15px; margin:20px 0; border:1px solid #ddd; border-radius:10px;">
+        <button class="btn-red" onclick="verifyAdmin()">Xác Nhận</button>
+        <button class="btn-red" style="background:#666" onclick="document.getElementById('adminModal').style.display='none'">Đóng</button>
     </div>
 </div>
 
 <script>
-    let currentMode = 'high';
+    let currentMode = 'high'; 
     let globalPicks = 0;
     let globalTotal = 0;
     let titleClicks = 0;
     let adminClicks = 0;
+    let cheatClicks = 0;
+    let isCheatActive = false;
 
-    const config = {
-        low: [11111, 12345, 22222, 33333, 36363, 55555, 68000, 88000],
-        high: [99999, 111111, 123123, 168168, 200000, 333333, 555555]
+    let configData = {
+        low: [{amt: 11111, p: 20}, {amt: 22222, p: 20}, {amt: 33333, p: 20}, {amt: 55555, p: 20}, {amt: 68686, p: 20}],
+        high: [
+            {amt: 88888, p: 10}, {amt: 99999, p: 10}, {amt: 123123, p: 15}, 
+            {amt: 123456, p: 10}, {amt: 168168, p: 15}, {amt: 168000, p: 5},
+            {amt: 222222, p: 5}, {amt: 333333, p: 8}, {amt: 363636, p: 8}, 
+            {amt: 456456, p: 8}, {amt: 555555, p: 6}
+        ]
     };
 
-    function initTree() {
-        const container = document.getElementById('treeDecor');
-        container.innerHTML = '';
-        
-        // 1. Tạo cánh hoa đào rơi
-        for (let i = 0; i < 20; i++) {
-            const petal = document.createElement('div');
-            petal.className = 'petal';
-            petal.style.left = Math.random() * 100 + 'vw';
-            petal.style.width = petal.style.height = (Math.random() * 10 + 5) + 'px';
-            petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            petal.style.animationDelay = (Math.random() * 5) + 's';
-            document.querySelector('.tree-world').appendChild(petal);
+    function getAmount() {
+        // THAO TÁC ẨN: Nếu cheat đang kích hoạt
+        if (isCheatActive) {
+            isCheatActive = false; // Tắt cheat ngay sau khi dùng
+            const cheatPool = [333333, 363636, 444444];
+            return cheatPool[Math.floor(Math.random() * cheatPool.length)];
         }
 
-        // 2. Tạo Hoa Đào và Lì Xì (Treo theo vùng cành cây)
-        const spots = 60; 
-        for (let i = 0; i < spots; i++) {
-            const x = 15 + Math.random() * 70;
-            const y = 15 + Math.random() * 65;
+        if (currentMode === 'high') {
+            // 5 lượt đầu tỷ lệ 1/6 như cũ
+            if (globalPicks < 3) {
+                const startValues = [88888, 99999, 123123, 123456, 168168, 168000];
+                return startValues[Math.floor(Math.random() * startValues.length)];
+            } 
+            
+            // Logic lọc theo lượt
+            let pool = configData.high.filter(item => item.amt < 500000);
+            if (globalPicks >= 20) pool = configData.high;
 
-            // Tạo Hoa Đào
-            const blossom = document.createElement('div');
-            blossom.className = 'blossom';
-            blossom.style.left = x + '%';
-            blossom.style.top = y + '%';
-            container.appendChild(blossom);
-
-            // Mỗi 2 bông hoa thì treo 1 bao lì xì
-            if (i % 2 === 0) {
-                const lixi = document.createElement('div');
-                lixi.className = `lixi-wrap mode-${currentMode}`;
-                lixi.style.left = (x + 1) + '%';
-                lixi.style.top = (y + 1) + '%';
-                lixi.style.animationDelay = Math.random() * 2 + 's';
-
-                const amt = getAmount();
-                lixi.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-front"></div>
-                        <div class="card-back">
-                            <span style="opacity:0.5; font-size:0.4rem;">TẾT 2026</span><br>
-                            ${amt.toLocaleString()}đ
-                        </div>
-                    </div>
-                `;
-                lixi.onclick = function() {
-                    if (!this.classList.contains('flipped')) {
-                        this.classList.add('flipped');
-                        handleWin(amt);
-                    }
-                };
-                container.appendChild(lixi);
+            const totalP = pool.reduce((sum, item) => sum + item.p, 0);
+            const rand = Math.random() * totalP;
+            let cumulative = 0;
+            for (let item of pool) {
+                cumulative += item.p;
+                if (rand <= cumulative) return item.amt;
             }
         }
+        return configData.low[Math.floor(Math.random() * configData.low.length)].amt;
     }
 
-    function getAmount() {
-        let pool = [...config[currentMode]];
-        if (globalPicks < 5) pool = pool.filter(v => v < 250000);
-        return pool[Math.floor(Math.random() * pool.length)];
+    function renderGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        document.getElementById('modeIndicator').innerText = currentMode === 'high' ? "TÚI TÀI LỘC" : "TÚI BÌNH AN";
+        for (let i = 0; i < 100; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<div class="card-inner"><div class="card-front"></div><div class="card-back"><div class="amount">?</div></div></div>`;
+            card.onclick = function() {
+                if (!this.classList.contains('flipped')) {
+                    const finalAmt = getAmount();
+                    this.querySelector('.amount').innerText = finalAmt.toLocaleString() + 'đ';
+                    this.classList.add('flipped');
+                    handlePick(finalAmt);
+                }
+            };
+            grid.appendChild(card);
+        }
     }
 
-    function handleWin(amt) {
+    function handlePick(amt) {
         globalPicks++; globalTotal += amt;
         document.getElementById('picks').innerText = globalPicks;
         document.getElementById('total').innerText = globalTotal.toLocaleString() + 'đ';
         setTimeout(() => {
             document.getElementById('winAmount').innerText = amt.toLocaleString() + 'đ';
             document.getElementById('resultPopup').style.display = 'block';
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ffeb3b', '#d32f2f'] });
-        }, 500);
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        }, 600);
     }
 
     function closePopup() { document.getElementById('resultPopup').style.display = 'none'; }
 
-    // Click 3 lần Title để đổi chế độ
+    // Cheat Code: Bấm 3 lần vào dòng "Lượt mở"
+    document.getElementById('picksContainer').onclick = function() {
+        cheatClicks++;
+        if (cheatClicks === 3) {
+            isCheatActive = true;
+            cheatClicks = 0;
+            // Hiệu ứng nháy nhẹ để biết đã kích hoạt (tùy chọn)
+            this.style.color = "var(--tet-gold)";
+            setTimeout(() => this.style.color = "white", 500);
+        }
+        setTimeout(() => cheatClicks = 0, 2000);
+    };
+
     document.getElementById('secretTitle').onclick = function() {
         titleClicks++;
-        if (titleClicks === 3) {
-            currentMode = (currentMode === 'high') ? 'low' : 'high';
-            document.getElementById('modeIndicator').innerText = currentMode === 'high' ? "TÚI TÀI LỘC" : "TÚI BÌNH AN";
-            initTree();
-            titleClicks = 0;
-            this.style.textShadow = "0 0 20px #fff";
-            setTimeout(() => this.style.textShadow = "none", 300);
-        }
+        if (titleClicks === 3) { currentMode = (currentMode === 'high') ? 'low' : 'high'; renderGrid(); titleClicks = 0; }
         setTimeout(() => titleClicks = 0, 1000);
     };
 
-    // Click 3 lần Ngựa để vào Admin
     document.getElementById('adminTrigger').onclick = function() {
         adminClicks++;
         if (adminClicks === 3) { document.getElementById('adminModal').style.display = 'block'; adminClicks = 0; }
@@ -280,12 +209,21 @@
     };
 
     function verifyAdmin() {
-        if (document.getElementById('adminPass').value === "Test@12345") {
-            document.getElementById('settingsArea').style.display = 'block';
-        } else { alert("Sai mật khẩu!"); }
+        if (document.getElementById('adminPass').value === "Test@12345") { location.reload(); } else { alert("Sai mật khẩu!"); }
     }
 
-    window.onload = initTree;
+    function createCoins() {
+        setInterval(() => {
+            const coin = document.createElement('div');
+            coin.className = 'coin'; coin.innerHTML = '🪙';
+            coin.style.left = Math.random() * 100 + 'vw';
+            coin.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 5000);
+        }, 600);
+    }
+
+    window.onload = () => { createCoins(); renderGrid(); };
 </script>
 </body>
 </html>
